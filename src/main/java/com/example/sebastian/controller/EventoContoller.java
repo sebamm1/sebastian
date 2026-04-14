@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 
 
 @RestController
-@RequestMapping("ap/eventos")
+@RequestMapping("/api/v1/eventos")
 public class EventoContoller {
 
     @Autowired
