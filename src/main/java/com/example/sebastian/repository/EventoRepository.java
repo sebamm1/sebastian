@@ -31,7 +31,7 @@ public class EventoRepository {
 
     public List<Evento> buscarPorNombre(String nombre) {
         List<Evento> resultado = new ArrayList<>();
-        for (Evento evento : eventos) {
+        for (Evento evento : eventos) {0
             if (evento.getNombre().equalsIgnoreCase(nombre)) {
             }
         }
