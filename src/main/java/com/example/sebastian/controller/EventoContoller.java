@@ -3,21 +3,14 @@ package com.example.sebastian.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import com.example.sebastian.model.Evento;
 import com.example.sebastian.service.EventoService;
 
 import jakarta.validation.Valid;
-
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.PutMapping;
-
 
 @RestController
 @RequestMapping("/api/v1/eventos")
@@ -27,42 +20,46 @@ public class EventoContoller {
     private EventoService eventoService;
 
     @GetMapping
-    public List<Evento> findALL() {
-        return eventoService.findALL();
+    public ResponseEntity<List<Evento>> findALL() {
+        return ResponseEntity.ok(eventoService.findALL());
     }
 
     @GetMapping("/{id}")
-    public Evento buscarEvento(@PathVariable String id) {
-        return eventoService.buscarEvento(id);
+    public ResponseEntity<Evento> buscarEvento(@PathVariable String id) {
+        Evento evento = eventoService.buscarEvento(id);
+        if (evento == null) return ResponseEntity.notFound().build(); // 404
+        return ResponseEntity.ok(evento);
     }
 
-    @GetMapping("nombre/{nombre}")
-    public List<Evento> buscarPorEventos(@PathVariable String nombre) {
-        return eventoService.buscarPorNombre(nombre);
+    @GetMapping("/nombre/{nombre}")
+    public ResponseEntity<List<Evento>> buscarPorNombre(@PathVariable String nombre) {
+        List<Evento> resultado = eventoService.buscarPorNombre(nombre);
+        if (resultado.isEmpty()) return ResponseEntity.notFound().build(); // 404
+        return ResponseEntity.ok(resultado);
     }
 
     @PostMapping
-    public Evento crearEvento(@Valid @RequestBody Evento evento) {
-        return eventoService.guardar(evento);
-    
+    public ResponseEntity<Evento> crearEvento(@Valid @RequestBody Evento evento) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(eventoService.guardar(evento)); // 201
     }
 
     @DeleteMapping("/{id}")
-    public void eliminarPorId(@PathVariable String id) {
+    public ResponseEntity<Void> eliminarPorId(@PathVariable String id) {
+        Evento evento = eventoService.buscarEvento(id);
+        if (evento == null) return ResponseEntity.notFound().build(); // 404
         eventoService.eliminarPorId(id);
+        return ResponseEntity.noContent().build(); // 204
     }
 
     @PutMapping("/{id}")
-    public Evento actualizarEvento(@PathVariable String id, @Valid @RequestBody Evento eventoActualizado) {
-        return eventoService.actulizarEvento(id, eventoActualizado);
+    public ResponseEntity<Evento> actualizarEvento(@PathVariable String id, @Valid @RequestBody Evento eventoActualizado) {
+        Evento resultado = eventoService.actulizarEvento(id, eventoActualizado);
+        if (resultado == null) return ResponseEntity.notFound().build(); // 404
+        return ResponseEntity.ok(resultado);
     }
 
-    @GetMapping("/ordena/{ordenar}")
-    public List<Evento> ordenrarEventos() {
-        return eventoService.ordenarEventos();
+    @GetMapping("/ordenar")
+    public ResponseEntity<List<Evento>> ordenarEventos() {
+        return ResponseEntity.ok(eventoService.ordenarEventos()); // fix: ruta limpia sin param muerto
     }
-    
-
-
-    
 }

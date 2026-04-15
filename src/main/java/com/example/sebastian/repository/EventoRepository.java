@@ -10,11 +10,11 @@ import com.example.sebastian.model.Evento;
 @Repository
 public class EventoRepository {
 
-    public List<Evento> eventos = new ArrayList<>();
+    private List<Evento> eventos = new ArrayList<>();
 
-        public Evento save(Evento evento) {
-            eventos.add(evento);
-            return evento;
+    public Evento save(Evento evento) {
+        eventos.add(evento);
+        return evento;
     }
 
     public List<Evento> findALL() {
@@ -22,7 +22,10 @@ public class EventoRepository {
     }
 
     public Evento buscarPorId(String id) {
-        return eventos.stream().filter(evento -> evento.getId().equals(id)).findFirst().orElse(null);
+        return eventos.stream()
+                .filter(evento -> evento.getId().equals(id))
+                .findFirst()
+                .orElse(null);
     }
 
     public void eliminarPorId(String id) {
@@ -31,8 +34,9 @@ public class EventoRepository {
 
     public List<Evento> buscarPorNombre(String nombre) {
         List<Evento> resultado = new ArrayList<>();
-        for (Evento evento : eventos) {0
+        for (Evento evento : eventos) {
             if (evento.getNombre().equalsIgnoreCase(nombre)) {
+                resultado.add(evento);
             }
         }
         return resultado;
@@ -52,18 +56,8 @@ public class EventoRepository {
     }
 
     public List<Evento> ordenarEventos() {
-        return eventos.stream().sorted((a,b) -> Double.compare(a.getEvento(), b.getEvento())).toList();
+        return eventos.stream()
+                .sorted((a, b) -> a.getFecha().compareTo(b.getFecha()))
+                .toList();
     }
-
-
-
-
-
-
-
-
-
-
-
-    
 }
